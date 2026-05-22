@@ -1,0 +1,14 @@
+Super admin
+Correo: admin@gmail.com
+Contraseña: Admin123@
+
+cliente 
+cliente@gmail.com
+contra: Cliente123.
+
+profecional
+profecional@gmail.com
+Contraseña: Profecional123.
+
+abc@gmail.com
+Contraseña:Profecional123.
