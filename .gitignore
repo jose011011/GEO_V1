@@ -1,0 +1,16 @@
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Configuración local
+.env
+
+# Uploads/documentos subidos
+public/assets/uploads/documentos/*
+
+# Mantener carpeta documentos aunque esté vacía
+!public/assets/uploads/documentos/.gitkeep
+
+# Archivos temporales
+*.log
+*.tmp
