@@ -77,4 +77,16 @@ class Cliente extends Model
 
         return $okUsuario && $okCliente;
     }
+    public function obtenerPorUsuario($idUsuario)
+{
+    $sql = "SELECT *
+            FROM clientes
+            WHERE id_usuario = ?
+            LIMIT 1";
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([$idUsuario]);
+
+    return $stmt->fetch();
+}
 }

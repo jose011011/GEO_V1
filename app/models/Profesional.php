@@ -263,4 +263,104 @@ public function contarTodos()
 
     return $resultado['total'] ?? 0;
 }
+public function obtenerDisponibles()
+{
+    $sql = "
+        SELECT
+            p.id_profesional,
+            u.nombre,
+            u.apellido,
+            u.celular,
+            c.nombre_categoria,
+            p.experiencia_anios,
+            p.descripcion_servicio,
+            p.zona_trabajo,
+
+            (
+                SELECT ROUND(AVG(ca.puntuacion),1)
+                FROM calificaciones ca
+                INNER JOIN solicitudes_servicio ss
+                    ON ca.id_solicitud = ss.id_solicitud
+                WHERE ss.id_profesional = p.id_profesional
+            ) promedio,
+
+            (
+                SELECT COUNT(*)
+                FROM calificaciones ca
+                INNER JOIN solicitudes_servicio ss
+                    ON ca.id_solicitud = ss.id_solicitud
+                WHERE ss.id_profesional = p.id_profesional
+            ) opiniones
+
+        FROM profesionales p
+
+        INNER JOIN usuarios u
+            ON p.id_usuario = u.id_usuario
+
+        INNER JOIN categorias c
+            ON p.id_categoria = c.id_categoria
+
+        WHERE p.estado_validacion='APROBADO'
+        AND p.estado_disponibilidad='DISPONIBLE'
+
+        ORDER BY u.nombre
+    ";
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute();
+
+    return $stmt->fetchAll();
+}
+
+public function obtenerPromedioCalificacion($idProfesional)
+{
+    $sql = "
+        SELECT
+            ROUND(AVG(ca.puntuacion),1) AS promedio
+        FROM calificaciones ca
+        INNER JOIN solicitudes_servicio ss
+            ON ca.id_solicitud = ss.id_solicitud
+        WHERE ss.id_profesional = ?
+    ";
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([$idProfesional]);
+
+    $resultado = $stmt->fetch();
+
+    return $resultado['promedio'] ?? 0;
+}
+public function obtenerTotalCalificaciones($idProfesional)
+{
+    $sql = "
+        SELECT COUNT(*) total
+        FROM calificaciones ca
+        INNER JOIN solicitudes_servicio ss
+            ON ca.id_solicitud = ss.id_solicitud
+        WHERE ss.id_profesional = ?
+    ";
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([$idProfesional]);
+
+    $resultado = $stmt->fetch();
+
+    return $resultado['total'] ?? 0;
+}
+public function obtenerTotalTrabajos($idProfesional)
+{
+    $sql = "
+        SELECT COUNT(*) total
+        FROM solicitudes_servicio
+        WHERE id_profesional = ?
+        AND estado_servicio = 'FINALIZADA'
+    ";
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([$idProfesional]);
+
+    $resultado = $stmt->fetch();
+
+    return $resultado['total'] ?? 0;
+}
 }

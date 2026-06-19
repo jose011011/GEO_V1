@@ -144,6 +144,9 @@ CREATE TABLE solicitudes_servicio (
         ON UPDATE CASCADE
         ON DELETE RESTRICT
 );
+ALTER TABLE solicitudes_servicio
+ADD latitud DECIMAL(10,8) NULL,
+ADD longitud DECIMAL(11,8) NULL;
 
 -- =========================
 -- CALIFICACIONES
@@ -179,6 +182,24 @@ CREATE TABLE ubicacion_gps (
         ON DELETE CASCADE
 );
 
+CREATE TABLE mensajes (
+    id_mensaje INT AUTO_INCREMENT PRIMARY KEY,
+    id_solicitud INT NOT NULL,
+    id_remitente INT NOT NULL,
+    mensaje TEXT NOT NULL,
+    fecha_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_mensaje_solicitud
+        FOREIGN KEY (id_solicitud)
+        REFERENCES solicitudes_servicio(id_solicitud)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_mensaje_usuario
+        FOREIGN KEY (id_remitente)
+        REFERENCES usuarios(id_usuario)
+        ON DELETE CASCADE
+);
+
 -- =========================
 -- DATOS INICIALES
 -- =========================
@@ -191,3 +212,14 @@ INSERT INTO roles (nombre_rol, descripcion) VALUES
 INSERT INTO categorias (nombre_categoria, descripcion) VALUES
 ('Electricista', 'Instalaciones eléctricas, cableado, mantenimiento, enchufes, térmicos y reparaciones eléctricas.'),
 ('Técnico electrónico', 'Reparación y mantenimiento de equipos electrónicos, placas, televisores, radios y dispositivos similares.');
+
+INSERT INTO `profesionales` (`id_profesional`, `id_usuario`, `id_categoria`, `tipo_documento_identidad`, `numero_documento`, `experiencia_anios`, `descripcion_servicio`, `zona_trabajo`, `estado_validacion`, `estado_disponibilidad`, `fecha_registro`) VALUES
+(1, 3, 1, 'CI', '123321123', 2, 'asdasdasdasdasdasdasdasdasdasd', 'Sopocacho, Centrod', 'APROBADO', 'DISPONIBLE', '2026-05-22 16:59:38'),
+(2, 4, 2, 'NIT', '12312312222212', 0, 'qweqweqweqweqweqsdvfbdfb klas daed adc doc ef', 'Sopocacho, Centrod', 'APROBADO', 'DISPONIBLE', '2026-05-22 17:03:46');
+
+
+INSERT INTO `usuarios` (`id_usuario`, `id_rol`, `nombre`, `apellido`, `correo`, `celular`, `password`, `estado`, `fecha_registro`) VALUES
+(1, 1, 'Jose', 'Mamani', 'admin@gmail.com', '70000000', '$2y$10$w/6ccXM0L99cMqLNGVf/n.FX/LGxUuCduoLAzk3.LyjemIMdSfIhW', 'ACTIVO', '2026-05-22 16:44:03'),
+(2, 4, 'jose', 'mamani machaca', 'cliente@gmail.com', '123123123', '$2y$10$yg4yWtwRKtB0K0gffGEAceo1W7WBY2UivKp2WkYJ6enMY.hAxBBQW', 'ACTIVO', '2026-05-22 16:57:15'),
+(3, 3, 'profecional', 'quispe poma', 'profecional@gmail.com', '12332145', '$2y$10$1XWiYh0ckF5oa82h04RqwOjgb3ExN6OQgYjtHjplQ3jW6a3eewCAu', 'ACTIVO', '2026-05-22 16:59:38'),
+(4, 3, 'xxx', 'xxx c', 'abc@gmail.com', '123321222', '$2y$10$3Xa1Mz00cnsUF42uMkRBZ.f.zQ8W75HnYZUovGiCBScaccWuSEf.2', 'ACTIVO', '2026-05-22 17:03:46');
